@@ -1,111 +1,207 @@
 package tests
 
 import (
-	"league_challenge/matrix"
+	"strconv"
 	"testing"
+
+	"league_challenge/matrix"
 )
 
+func matrixFromInts(rows [][]int) *matrix.Matrix {
+	data := make([][]string, len(rows))
+	for i, row := range rows {
+		data[i] = make([]string, len(row))
+		for j, val := range row {
+			data[i][j] = strconv.Itoa(val)
+		}
+	}
+
+	return &matrix.Matrix{
+		Data: data,
+		Size: len(rows),
+	}
+}
+
 func TestTranspose(t *testing.T) {
-	m := &matrix.Matrix{
-		Data: [][]string{
-			{"1", "2", "3"},
-			{"4", "5", "6"},
-			{"7", "8", "9"},
+	tests := []struct {
+		name   string
+		matrix *matrix.Matrix
+		want   string
+	}{
+		{
+			name:   "asymmetric 3x3",
+			matrix: matrixFromInts([][]int{{1, 2, 3}, {0, -5, 8}, {9, 4, 11}}),
+			want:   "1,0,9\n2,-5,4\n3,8,11\n",
 		},
-		Size: int(3),
+		{
+			name:   "already diagonal",
+			matrix: matrixFromInts([][]int{{4, 0, 0}, {0, -3, 0}, {0, 0, 7}}),
+			want:   "4,0,0\n0,-3,0\n0,0,7\n",
+		},
 	}
 
-	want := "1,4,7\n2,5,8\n3,6,9\n"
-
-	m.Transpose()
-	got := m.Echo()
-
-	if want != got {
-		t.Errorf("Failed while transposing matrix.\nWant:\n%s\nGot:\n%s", want, got)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.matrix.Transpose()
+			if got := tt.matrix.Echo(); got != tt.want {
+				t.Fatalf("transpose mismatch.\nwant:\n%s\ngot:\n%s", tt.want, got)
+			}
+		})
 	}
-
 }
 
 func TestFlatten(t *testing.T) {
-
-	m := &matrix.Matrix{
-		Data: [][]string{
-			{"1", "2", "3"},
-			{"4", "5", "6"},
-			{"7", "8", "9"},
+	tests := []struct {
+		name   string
+		matrix *matrix.Matrix
+		want   string
+	}{
+		{
+			name:   "single row",
+			matrix: matrixFromInts([][]int{{1, 2, 3, 4}}),
+			want:   "1,2,3,4",
 		},
-		Size: int(3),
+		{
+			name:   "multi row",
+			matrix: matrixFromInts([][]int{{-2, 0}, {5, 9}}),
+			want:   "-2,0,5,9",
+		},
 	}
 
-	want := "1,2,3,4,5,6,7,8,9"
-	got := m.Flatten()
-	if want != got {
-		t.Errorf("Failed while flattening matrix.\nWant:\n%s\nGot:\n%s", want, got)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.matrix.Flatten(); got != tt.want {
+				t.Fatalf("flatten mismatch.\nwant: %s\ngot: %s", tt.want, got)
+			}
+		})
 	}
-
 }
 
-func TestAddition(t *testing.T) {
-
-	m := &matrix.Matrix{
-		Data: [][]string{
-			{"1", "2", "3"},
-			{"4", "5", "6"},
-			{"7", "8", "9"},
+func TestAdd(t *testing.T) {
+	tests := []struct {
+		name   string
+		matrix *matrix.Matrix
+		want   int
+	}{
+		{
+			name:   "positive values",
+			matrix: matrixFromInts([][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
+			want:   45,
 		},
-		Size: int(3),
+		{
+			name:   "with negatives",
+			matrix: matrixFromInts([][]int{{-2, 4}, {-3, 6}}),
+			want:   5,
+		},
+		{
+			name:   "includes zero",
+			matrix: matrixFromInts([][]int{{0, 0}, {0, 0}}),
+			want:   0,
+		},
 	}
 
-	want := 1+2+3+4+5+6+7+8+9
-	got, err := m.Add()
-	if err != nil{
-		t.Errorf("Failed while adding matrix values with error : %s\n", err.Error())
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.matrix.Add()
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got != tt.want {
+				t.Fatalf("sum mismatch: want %d got %d", tt.want, got)
+			}
+		})
 	}
-	if want != got {
-		t.Errorf("Failed while adding matrix.\nWant:\n%d\nGot:\n%d", want, got)
+}
+
+func TestAddError(t *testing.T) {
+	m := &matrix.Matrix{
+		Data: [][]string{{"1", "two"}},
+		Size: 2,
+	}
+
+	got, err := m.Add()
+	if err == nil {
+		t.Fatalf("expected error for non-integer element; got sum %d", got)
+	}
+	if got != 0 {
+		t.Fatalf("expected zero sum on error, got %d", got)
 	}
 }
 
 func TestMultiply(t *testing.T) {
-
-	m := &matrix.Matrix{
-		Data: [][]string{
-			{"1", "2", "3"},
-			{"4", "5", "6"},
-			{"7", "8", "9"},
+	tests := []struct {
+		name   string
+		matrix *matrix.Matrix
+		want   int
+	}{
+		{
+			name:   "positive values",
+			matrix: matrixFromInts([][]int{{1, 2, 3}, {4, 5, 6}}),
+			want:   720,
 		},
-		Size: int(3),
+		{
+			name:   "contains zero",
+			matrix: matrixFromInts([][]int{{7, 0}, {3, 5}}),
+			want:   0,
+		},
+		{
+			name:   "includes negative",
+			matrix: matrixFromInts([][]int{{-1, 2}, {3, 4}}),
+			want:   -24,
+		},
 	}
 
-	want := 1*2*3*4*5*6*7*8*9
-	got, err := m.Multiply()
-	if err != nil{
-		t.Errorf("Failed while multiplying matrix with error : %s\n", err.Error())
-		return
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.matrix.Multiply()
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got != tt.want {
+				t.Fatalf("product mismatch: want %d got %d", tt.want, got)
+			}
+		})
 	}
-	if want != got {
-		t.Errorf("Failed while multiplying matrix.\nWant:\n%d\nGot:\n%d", want, got)
-		return
+}
+
+func TestMultiplyError(t *testing.T) {
+	m := &matrix.Matrix{
+		Data: [][]string{{"foo", "2"}},
+		Size: 1,
+	}
+
+	got, err := m.Multiply()
+	if err == nil {
+		t.Fatalf("expected error for non-integer element; got product %d", got)
+	}
+	if got != 0 {
+		t.Fatalf("expected zero product on error, got %d", got)
 	}
 }
 
 func TestEcho(t *testing.T) {
-	
-	m := &matrix.Matrix{
-		Data: [][]string{
-			{"1", "2", "3"},
-			{"4", "5", "6"},
-			{"7", "8", "9"},
+	tests := []struct {
+		name   string
+		matrix *matrix.Matrix
+		want   string
+	}{
+		{
+			name:   "multi row",
+			matrix: matrixFromInts([][]int{{1, 2, 3}, {4, 5, 6}}),
+			want:   "1,2,3\n4,5,6\n",
 		},
-		Size: int(3),
+		{
+			name:   "single element",
+			matrix: matrixFromInts([][]int{{42}}),
+			want:   "42\n",
+		},
 	}
 
-	want := "1,2,3\n4,5,6\n7,8,9\n"
-	got := m.Echo()
-
-	if want != got {
-		t.Errorf("Failed while echoing matrix.\nWant:\n%s\nGot:\n%s", want, got)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.matrix.Echo(); got != tt.want {
+				t.Fatalf("echo mismatch.\nwant:\n%s\ngot:\n%s", tt.want, got)
+			}
+		})
 	}
-
 }
