@@ -54,6 +54,20 @@ func TestNewMatrix(t *testing.T) {
 			wantData:    [][]string{{"1", "2"}, {"3", "4"}},
 		},
 		{
+			name: 		"ints with spaces",
+			includeFile: true,
+			contents: 	" 1,2 \n3 , 4\n",
+			wantSize:   2,
+			wantData: 	[][]string{{"1", "2"}, {"3", "4"}},
+		},
+		{
+			name: 		"empty cells",
+			includeFile: true,
+			contents: 	" 1,,3\n4,5,6\n,8,9\n",
+			wantSize:   3,
+			wantData: 	[][]string{{"1", "","3"}, {"4", "5","6"},{"", "8","9"}},
+		},
+		{
 			name:        "missing file",
 			includeFile: false,
 			wantErr:     "must upload form file",
