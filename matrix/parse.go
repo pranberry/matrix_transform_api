@@ -20,7 +20,7 @@ type ParseResp struct{
 func NewMatrix(r *http.Request) (*Matrix, error) {
 
 	// read from file
-	keyName := "file"
+	const keyName string = "file"
 	file, _, err := r.FormFile(keyName)
 	if err != nil {
 		return nil, fmt.Errorf("error: %s. must upload form file with key '%s'", err.Error(), keyName)

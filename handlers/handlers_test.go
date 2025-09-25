@@ -1,4 +1,4 @@
-package tests
+package handlers
 
 import (
 	"bytes"
@@ -8,8 +8,6 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
-
-	"league_challenge/handlers"
 )
 
 // sampleMatrixCSV provides a consistent 3x3 matrix payload reused across
@@ -118,35 +116,35 @@ func handlerExpectations() []handlerExpectation {
 		{
 			name:     "echo",
 			target:   "/echo",
-			handler:  http.HandlerFunc(handlers.Echo),
+			handler:  http.HandlerFunc(Echo),
 			input:    sampleMatrixCSV,
 			wantBody: "1,2,3\n4,5,6\n7,8,9\n",
 		},
 		{
 			name:     "transpose",
 			target:   "/transpose",
-			handler:  http.HandlerFunc(handlers.Transpose),
+			handler:  http.HandlerFunc(Transpose),
 			input:    sampleMatrixCSV,
 			wantBody: "1,4,7\n2,5,8\n3,6,9\n",
 		},
 		{
 			name:     "flatten",
 			target:   "/flatten",
-			handler:  http.HandlerFunc(handlers.Flatten),
+			handler:  http.HandlerFunc(Flatten),
 			input:    sampleMatrixCSV,
 			wantBody: "1,2,3,4,5,6,7,8,9",
 		},
 		{
 			name:     "addition",
 			target:   "/addition",
-			handler:  http.HandlerFunc(handlers.Addition),
+			handler:  http.HandlerFunc(Addition),
 			input:    sampleMatrixCSV,
 			wantBody: "45",
 		},
 		{
 			name:     "multiply",
 			target:   "/multiply",
-			handler:  http.HandlerFunc(handlers.Multiply),
+			handler:  http.HandlerFunc(Multiply),
 			input:    sampleMatrixCSV,
 			wantBody: "362880",
 		},

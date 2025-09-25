@@ -1,16 +1,14 @@
-package tests
+package matrix
 
 import (
 	"strconv"
 	"testing"
-
-	"league_challenge/matrix"
 )
 
 // matrixFromInts converts an integer grid into the Matrix format used by the
 // handlers. Tests rely on this helper to keep the happy-path setup compact
 // while still exercising the string parsing logic inside Add/Multiply.
-func matrixFromInts(rows [][]int) *matrix.Matrix {
+func matrixFromInts(rows [][]int) *Matrix {
 	data := make([][]string, len(rows))
 	for i, row := range rows {
 		data[i] = make([]string, len(row))
@@ -19,7 +17,7 @@ func matrixFromInts(rows [][]int) *matrix.Matrix {
 		}
 	}
 
-	return &matrix.Matrix{
+	return &Matrix{
 		Data: data,
 		Size: len(rows),
 	}
@@ -30,7 +28,7 @@ func matrixFromInts(rows [][]int) *matrix.Matrix {
 func TestTranspose(t *testing.T) {
 	tests := []struct {
 		name   string
-		matrix *matrix.Matrix
+		matrix *Matrix
 		want   string
 	}{
 		{
@@ -60,7 +58,7 @@ func TestTranspose(t *testing.T) {
 func TestFlatten(t *testing.T) {
 	tests := []struct {
 		name   string
-		matrix *matrix.Matrix
+		matrix *Matrix
 		want   string
 	}{
 		{
@@ -89,7 +87,7 @@ func TestFlatten(t *testing.T) {
 func TestAdd(t *testing.T) {
 	tests := []struct {
 		name   string
-		matrix *matrix.Matrix
+		matrix *Matrix
 		want   int
 	}{
 		{
@@ -126,7 +124,7 @@ func TestAdd(t *testing.T) {
 // skipping bad data and that the fallback sum remains zero when an error is
 // encountered.
 func TestAddError(t *testing.T) {
-	m := &matrix.Matrix{
+	m := &Matrix{
 		Data: [][]string{{"1", "two"}},
 		Size: 2,
 	}
@@ -145,7 +143,7 @@ func TestAddError(t *testing.T) {
 func TestMultiply(t *testing.T) {
 	tests := []struct {
 		name   string
-		matrix *matrix.Matrix
+		matrix *Matrix
 		want   int
 	}{
 		{
@@ -181,7 +179,7 @@ func TestMultiply(t *testing.T) {
 // TestMultiplyError mirrors TestAddError to ensure non-integer elements
 // short-circuit multiplication and provide a deterministic zero result.
 func TestMultiplyError(t *testing.T) {
-	m := &matrix.Matrix{
+	m := &Matrix{
 		Data: [][]string{{"foo", "2"}},
 		Size: 1,
 	}
@@ -200,7 +198,7 @@ func TestMultiplyError(t *testing.T) {
 func TestEcho(t *testing.T) {
 	tests := []struct {
 		name   string
-		matrix *matrix.Matrix
+		matrix *Matrix
 		want   string
 	}{
 		{

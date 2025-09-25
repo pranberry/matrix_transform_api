@@ -14,3 +14,5 @@
   - the requirement is pretty straight-forward
 - no concurrency here
 - not enforcing HTTP Request types
+- returning all requests as string not JSON
+- tests added
