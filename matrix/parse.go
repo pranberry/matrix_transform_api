@@ -7,17 +7,16 @@ import (
 	"strings"
 )
 
-// IN this file we....
-// could use a custom type in the return here.
-// - type would hold the matrix, an error, an http status code
+/*
+	This file has ELT Operations:
+	- Extracts file from Http.Request
+	- Extracts matrix form file
+	- Sanitizes the retrieved matrix
+	- Loads into Matrix struct
+*/
 
-type ParseResp struct {
-	Matrix *Matrix
-	Status int
-	Error  error
-}
 
-// Loads transforms and
+// Extracts file from http.request and returns valid Matrix
 func NewMatrix(r *http.Request) (*Matrix, error) {
 
 	// read from file
@@ -34,12 +33,20 @@ func NewMatrix(r *http.Request) (*Matrix, error) {
 		return nil, fmt.Errorf("error: %s", err.Error())
 	}
 
+	// csv.ReadAll() returns valid on empty file, check for empty records
+	if len(records) == 0 {
+		return nil, fmt.Errorf("error: empty matrix")
+	}
+	
+	// Validate matrix for NxN
 	if err = validateNxN(records); err != nil {
 		return nil, err
 	}
 
+	// Call to sanitize matrix
 	cleanMatrix(records)
 
+	// Initialize matrix
 	matrix := &Matrix{
 		Data: records,
 		Size: len(records),
@@ -48,16 +55,10 @@ func NewMatrix(r *http.Request) (*Matrix, error) {
 	return matrix, nil
 }
 
-// Parses and validates raw records returned by CSV.Reader.
-// returns errors on empty matrix, and !NxN matrix.
+// Strictly validates on NxN-ness of matrix
+// A matrix is a valid NxN if number of rows == number of columns per row
 func validateNxN(records [][]string) error {
-
-	// csv.ReadAll() returns valid on empty file, check for empty records
-	if len(records) == 0 {
-		return fmt.Errorf("error: empty matrix")
-	}
-
-	// number of #rows == #cols(/#elements in each row)
+	// number of #rows must == #cols(/#elements in each row)
 	for _, row := range records {
 		if len(row) != len(records) {
 			return fmt.Errorf("error: not an NxN matrix")
@@ -68,7 +69,7 @@ func validateNxN(records [][]string) error {
 
 // Sanitize matrix as desired.
 // Trims spaces in each element.
-// Optionally, replace empty cells with "NA"
+// Commented out code to optionally, replace empty cells with "NA"
 func cleanMatrix(records [][]string) {
 	// trim spaces on each element. avoid conversion failures downstream
 	for _, row := range records {
