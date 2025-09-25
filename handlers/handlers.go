@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-
+// Print back the matrix
 func Echo(w http.ResponseWriter, r *http.Request) {
 	// expect a file with the key "file" in form data
 	matrix, err := matrix.NewMatrix(r)
@@ -19,7 +19,7 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, matrix.Echo())
 }
 
-// "invert" a NxN matrix...rows become columns, columns become rows
+// Invert/Transpose a NxN matrix...rows become columns, columns become rows
 func Transpose(w http.ResponseWriter, r *http.Request){
 
 	log.Println("Request: /invert from", r.RemoteAddr)
@@ -27,6 +27,7 @@ func Transpose(w http.ResponseWriter, r *http.Request){
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	matrix.Transpose()
@@ -35,7 +36,7 @@ func Transpose(w http.ResponseWriter, r *http.Request){
 }
 
 
-
+// Returns the flattened representation of the matrix
 func Flatten(w http.ResponseWriter, r *http.Request){
 	log.Println("Request: /flatten from", r.RemoteAddr)
 
@@ -49,23 +50,36 @@ func Flatten(w http.ResponseWriter, r *http.Request){
 }
 
 
-
-
-
-/*
-	In this file/package live functions which perform arithmetic on the uploaded file.
-*/
-
-// Returns the sum of all values in the matrix-file
+// Returns the sum of all values in a matrix
 func Addition(w http.ResponseWriter, r *http.Request){
 	log.Println("Request: /add from", r.RemoteAddr)
-	fmt.Fprint(w, "addition endpoint")
+	matrix, err := matrix.NewMatrix(r)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	sum, err := matrix.Add()
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Fprint(w, sum)
 }
 
-// Returns the sum of all values in the matrix-file
+// Returns the product of all values in a matrix
 func Multiply(w http.ResponseWriter, r *http.Request){
 	log.Println("Request: /mul from", r.RemoteAddr)
-	fmt.Fprint(w, "multipily endpoint")
+	matrix, err := matrix.NewMatrix(r)
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	prod, err := matrix.Multiply()
+	if err != nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	fmt.Fprint(w, prod)
 }
 
 

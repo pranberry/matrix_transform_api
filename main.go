@@ -13,6 +13,7 @@ import (
 func main() {
 	http.HandleFunc("/echo", handlers.Echo)
 	http.HandleFunc("/invert", handlers.Transpose)
+	http.HandleFunc("/invert", handlers.Transpose)
 	http.HandleFunc("/flatten", handlers.Flatten)
 	http.HandleFunc("/add", handlers.Addition)
 	http.HandleFunc("/mul", handlers.Multiply)

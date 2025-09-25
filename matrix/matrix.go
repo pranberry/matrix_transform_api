@@ -45,32 +45,30 @@ func (m *Matrix) Flatten() string {
 	return strings.Join(retMatrix, ",")
 }
 
-func (m *Matrix) Add() int {
+func (m *Matrix) Add() (int, error) {
 	sum := 0
 	for _, row := range m.Data{
 		for j := range row{
 			v, err := strconv.Atoi(row[j])
 			if err != nil{
-				return 0
+				return 0, fmt.Errorf("error: non-int values in matrix. All values must be of type int for addition")
 			}
 			sum += v
 		}
 	}
-	fmt.Println(sum)
-	return sum
+	return sum, nil
 }
 
-func (m *Matrix) Multiply() int {
+func (m *Matrix) Multiply() (int, error) {
 	prod := 1
 	for _, row := range m.Data{
 		for j := range row{
 			v, err := strconv.Atoi(row[j])
 			if err != nil{
-				fmt.Println(err)
-				return -1
+				return 0, fmt.Errorf("error: non-int values in matrix. All values must be of type int for multiplication")
 			}
 			prod *= v
 		}
 	}
-	return prod
+	return prod, nil
 }

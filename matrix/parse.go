@@ -10,13 +10,20 @@ import (
 // could use a custom type in the return here.
 // - type would hold the matrix, an error, an http status code
 
+type ParseResp struct{
+	Matrix *Matrix
+	Status int
+	Error error
+}
+
 // Loads transforms and
 func NewMatrix(r *http.Request) (*Matrix, error) {
 
 	// read from file
-	file, _, err := r.FormFile("file")
+	keyName := "file"
+	file, _, err := r.FormFile(keyName)
 	if err != nil {
-		return nil, fmt.Errorf("error: %s", err.Error())
+		return nil, fmt.Errorf("error: %s. must upload form file with key '%s'", err.Error(), keyName)
 	}
 	defer file.Close()
 	
