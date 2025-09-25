@@ -61,6 +61,12 @@ func TestNewMatrix(t *testing.T) {
 			wantData: 	[][]string{{"1", "2"}, {"3", "4"}},
 		},
 		{
+			name:    "empty file",
+			includeFile: true,
+			contents: "",
+			wantErr: "empty matrix",
+		},
+		{
 			name: 		"empty cells",
 			includeFile: true,
 			contents: 	" 1,,3\n4,5,6\n,8,9\n",
@@ -93,7 +99,6 @@ func TestNewMatrix(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -141,11 +146,6 @@ func TestValidateNxN(t *testing.T) {
 			records: [][]string{{"1", "2", "3"}, {"4", "5", "6"}, {"7", "8", "9"}},
 		},
 		{
-			name:    "empty",
-			records: [][]string{},
-			wantErr: "empty matrix",
-		},
-		{
 			name:    "non square",
 			records: [][]string{{"1", "2"}, {"3"}},
 			wantErr: "not an NxN matrix",
@@ -153,7 +153,6 @@ func TestValidateNxN(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		tc := tc
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
