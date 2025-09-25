@@ -7,6 +7,9 @@ import (
 	"league_challenge/matrix"
 )
 
+// matrixFromInts converts an integer grid into the Matrix format used by the
+// handlers. Tests rely on this helper to keep the happy-path setup compact
+// while still exercising the string parsing logic inside Add/Multiply.
 func matrixFromInts(rows [][]int) *matrix.Matrix {
 	data := make([][]string, len(rows))
 	for i, row := range rows {
@@ -22,6 +25,8 @@ func matrixFromInts(rows [][]int) *matrix.Matrix {
 	}
 }
 
+// TestTranspose verifies that Transpose mutates the matrix in-place and that
+// the returned view from Echo matches the expected row/column orientation.
 func TestTranspose(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -50,6 +55,8 @@ func TestTranspose(t *testing.T) {
 	}
 }
 
+// TestFlatten ensures we flatten multi-row matrices in row-major order with a
+// comma delimiter and without a trailing newline, matching the API contract.
 func TestFlatten(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -77,6 +84,8 @@ func TestFlatten(t *testing.T) {
 	}
 }
 
+// TestAdd covers representative positive, zero, and negative values so we know
+// the accumulator starts at zero and that sign handling is correct.
 func TestAdd(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -113,6 +122,9 @@ func TestAdd(t *testing.T) {
 	}
 }
 
+// TestAddError confirms we surface parsing errors rather than silently
+// skipping bad data and that the fallback sum remains zero when an error is
+// encountered.
 func TestAddError(t *testing.T) {
 	m := &matrix.Matrix{
 		Data: [][]string{{"1", "two"}},
@@ -128,6 +140,8 @@ func TestAddError(t *testing.T) {
 	}
 }
 
+// TestMultiply demonstrates that the product accumulator starts at one and
+// that zeros/negatives propagate through the final product as expected.
 func TestMultiply(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -164,6 +178,8 @@ func TestMultiply(t *testing.T) {
 	}
 }
 
+// TestMultiplyError mirrors TestAddError to ensure non-integer elements
+// short-circuit multiplication and provide a deterministic zero result.
 func TestMultiplyError(t *testing.T) {
 	m := &matrix.Matrix{
 		Data: [][]string{{"foo", "2"}},
@@ -179,6 +195,8 @@ func TestMultiplyError(t *testing.T) {
 	}
 }
 
+// TestEcho ensures the multi-line representation always ends with a newline
+// so handlers can stream it directly without extra formatting logic.
 func TestEcho(t *testing.T) {
 	tests := []struct {
 		name   string
