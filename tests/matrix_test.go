@@ -56,8 +56,12 @@ func TestAddition(t *testing.T) {
 		Size: int(3),
 	}
 
-	want := 45
-	got := m.Add()
+	want := 1+2+3+4+5+6+7+8+9
+	got, err := m.Add()
+	if err != nil{
+		t.Errorf("Failed while adding matrix values with error : %s\n", err.Error())
+		return
+	}
 	if want != got {
 		t.Errorf("Failed while adding matrix.\nWant:\n%d\nGot:\n%d", want, got)
 	}
@@ -74,10 +78,15 @@ func TestMultiply(t *testing.T) {
 		Size: int(3),
 	}
 
-	want := 362880
-	got := m.Multiply()
+	want := 1*2*3*4*5*6*7*8*9
+	got, err := m.Multiply()
+	if err != nil{
+		t.Errorf("Failed while multiplying matrix with error : %s\n", err.Error())
+		return
+	}
 	if want != got {
 		t.Errorf("Failed while multiplying matrix.\nWant:\n%d\nGot:\n%d", want, got)
+		return
 	}
 }
 
