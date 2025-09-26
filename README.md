@@ -1,9 +1,7 @@
 # League Backend Challenge
 
-- API works as intended
-- All tests pass
+## How to run
 
-## How to run:
 Run web server
 ```
 go run .
@@ -19,6 +17,11 @@ curl -F 'file=@/path/matrix.csv' "localhost:8080/echo"
 ```
 
 ## Solution Notes
+
+### Status
+
+- API works as intended
+- All tests pass
 
 ### Assumptions
 
@@ -113,4 +116,3 @@ The input file to these functions is a matrix, of any dimension where the number
 - The code is reasonably documented
 - The code is tested
 - The code is robust and handles invalid input and provides helpful error messages
-
