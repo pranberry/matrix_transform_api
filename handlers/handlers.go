@@ -12,22 +12,22 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 
 	// before and after logging
 	log.Printf("REQUEST: method=%v on url=%v from remote=%v", r.Method, r.URL.Path, r.RemoteAddr)
-	reqResp := http.StatusBadRequest
+	reqStatus := http.StatusBadRequest
 	defer func(){
-		log.Printf("RESPONSE: status=%d on url=%v on %v from %v", reqResp, r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("RESPONSE: status=%d on method=%v on url=%v from %v", reqStatus, r.Method, r.URL.Path, r.RemoteAddr)
 	}()
 	
 	// get matrix
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 
 	// write and return response
 	w.Header().Set("Content-Type", "text/csv")
-	reqResp = http.StatusOK	
-	w.WriteHeader(reqResp)
+	reqStatus = http.StatusOK	
+	w.WriteHeader(reqStatus)
 	fmt.Fprint(w, matrix.Echo())
 }
 
@@ -35,14 +35,14 @@ func Echo(w http.ResponseWriter, r *http.Request) {
 func Transpose(w http.ResponseWriter, r *http.Request){
 
 	log.Printf("REQUEST: method=%v on url=%v from remote=%v", r.Method, r.URL.Path, r.RemoteAddr)
-	reqResp := http.StatusBadRequest
+	reqStatus := http.StatusBadRequest
 	defer func(){
-		log.Printf("RESPONSE: status=%d on url=%v on %v from %v", reqResp, r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("RESPONSE: status=%d on method=%v on url=%v from %v", reqStatus, r.Method, r.URL.Path, r.RemoteAddr)
 	}()
 
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 
@@ -51,8 +51,8 @@ func Transpose(w http.ResponseWriter, r *http.Request){
 
 	// write and return response
 	w.Header().Set("Content-Type", "text/csv")
-	reqResp = http.StatusOK	
-	w.WriteHeader(reqResp)
+	reqStatus = http.StatusOK	
+	w.WriteHeader(reqStatus)
 	fmt.Fprint(w, matrix.Echo())
 }
 
@@ -61,20 +61,20 @@ func Transpose(w http.ResponseWriter, r *http.Request){
 func Flatten(w http.ResponseWriter, r *http.Request){
 	
 	log.Printf("REQUEST: method=%v on url=%v from remote=%v", r.Method, r.URL.Path, r.RemoteAddr)
-	reqResp := http.StatusBadRequest
+	reqStatus := http.StatusBadRequest
 	defer func(){
-		log.Printf("RESPONSE: status=%d on url=%v on %v from %v", reqResp, r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("RESPONSE: status=%d on method=%v on url=%v from %v", reqStatus, r.Method, r.URL.Path, r.RemoteAddr)
 	}()
 
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 	
-	reqResp = http.StatusOK
+	reqStatus = http.StatusOK
 	w.Header().Set("Content-Type", "text/csv")
-	w.WriteHeader(reqResp)
+	w.WriteHeader(reqStatus)
 	// flattened response returned here
 	fmt.Fprint(w, matrix.Flatten())
 }
@@ -84,27 +84,27 @@ func Flatten(w http.ResponseWriter, r *http.Request){
 func Addition(w http.ResponseWriter, r *http.Request){
 	
 	log.Printf("REQUEST: method=%v on url=%v from remote=%v", r.Method, r.URL.Path, r.RemoteAddr)
-	reqResp := http.StatusBadRequest
+	reqStatus := http.StatusBadRequest
 	defer func(){
-		log.Printf("RESPONSE: status=%d on url=%v on %v from %v", reqResp, r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("RESPONSE: status=%d on method=%v on url=%v from %v", reqStatus, r.Method, r.URL.Path, r.RemoteAddr)
 	}()
 
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 
 	// calculate sum
 	sum, err := matrix.Add()
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 	
-	reqResp = http.StatusOK
+	reqStatus = http.StatusOK
 	w.Header().Set("Content-Type", "text/csv")
-	w.WriteHeader(reqResp)
+	w.WriteHeader(reqStatus)
 	fmt.Fprint(w, sum)
 }
 
@@ -112,27 +112,27 @@ func Addition(w http.ResponseWriter, r *http.Request){
 func Multiply(w http.ResponseWriter, r *http.Request){
 	
 	log.Printf("REQUEST: method=%v on url=%v from remote=%v", r.Method, r.URL.Path, r.RemoteAddr)
-	reqResp := http.StatusBadRequest
+	reqStatus := http.StatusBadRequest
 	defer func(){
-		log.Printf("RESPONSE: status=%d on url=%v on %v from %v", reqResp, r.Method, r.URL.Path, r.RemoteAddr)
+		log.Printf("RESPONSE: status=%d on method=%v on url=%v from %v", reqStatus, r.Method, r.URL.Path, r.RemoteAddr)
 	}()
 
 	matrix, err := matrix.NewMatrix(r)
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 	
 	// calculate product
 	prod, err := matrix.Multiply()
 	if err != nil{
-		http.Error(w, err.Error(), reqResp)
+		http.Error(w, err.Error(), reqStatus)
 		return
 	}
 	
-	reqResp = http.StatusOK
+	reqStatus = http.StatusOK
 	w.Header().Set("Content-Type", "text/csv")
-	w.WriteHeader(reqResp)
+	w.WriteHeader(reqStatus)
 	fmt.Fprint(w, prod)
 }
 
