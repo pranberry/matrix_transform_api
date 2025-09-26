@@ -18,12 +18,12 @@ type Matrix struct {
 // Returns a string representation of the matrix.
 // Echo() is frequently used.
 func (m *Matrix) Echo() string {
-	var matrixStr string
+	var b strings.Builder
 	for _, row := range m.Data {
-		// Each row is separated by a new-line
-		matrixStr = fmt.Sprintf("%s%s\n", matrixStr, strings.Join(row, ","))
+		b.WriteString(strings.Join(row, ","))
+		b.WriteByte('\n')
 	}
-	return matrixStr
+	return b.String()
 }
 
 // Transposes the matrix in-memory.
@@ -40,9 +40,14 @@ func (m *Matrix) Transpose() {
 // Nested slices get reduced to single slice.
 // Sliced gets joined into a string.
 func (m *Matrix) Flatten() string {
-	retMatrix := make([]string, 0, m.Size)
-	for _, v := range m.Data {
-		retMatrix = append(retMatrix, v...)
+	var totalElements int
+	for _, row := range m.Data {
+		totalElements += len(row)
+	}
+
+	retMatrix := make([]string, 0, totalElements)
+	for _, row := range m.Data {
+		retMatrix = append(retMatrix, row...)
 	}
 	return strings.Join(retMatrix, ",")
 }

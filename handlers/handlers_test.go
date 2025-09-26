@@ -101,6 +101,41 @@ func TestHandlersMalformedFile(t *testing.T) {
 	}
 }
 
+// TestHandlersNonInt verifies that arithmetic endpoints reject matrices with
+// non-integer values, ensuring we surface the parse error to clients.
+func TestHandlersNonInt(t *testing.T) {
+	content := "1,2\n3,foo\n"
+	tests := []handlerExpectation{
+		{
+			name:    "addition",
+			target:  "/add",
+			handler: http.HandlerFunc(Addition),
+		},
+		{
+			name:    "multiply",
+			target:  "/mul",
+			handler: http.HandlerFunc(Multiply),
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			req := newMultipartRequest(t, tc.target, &content)
+			rec := httptest.NewRecorder()
+
+			tc.handler.ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusBadRequest {
+				t.Fatalf("expected status 400, got %d", rec.Code)
+			}
+
+			if body := rec.Body.String(); !strings.Contains(body, "non-int values") {
+				t.Fatalf("expected non-int error, got %q", body)
+			}
+		})
+	}
+}
+
 type handlerExpectation struct {
 	name     string
 	target   string
@@ -128,6 +163,13 @@ func handlerExpectations() []handlerExpectation {
 			wantBody: "1,4,7\n2,5,8\n3,6,9\n",
 		},
 		{
+			name:     "invert",
+			target:   "/invert",
+			handler:  http.HandlerFunc(Transpose),
+			input:    sampleMatrixCSV,
+			wantBody: "1,4,7\n2,5,8\n3,6,9\n",
+		},
+		{
 			name:     "flatten",
 			target:   "/flatten",
 			handler:  http.HandlerFunc(Flatten),
@@ -136,14 +178,14 @@ func handlerExpectations() []handlerExpectation {
 		},
 		{
 			name:     "addition",
-			target:   "/addition",
+			target:   "/add",
 			handler:  http.HandlerFunc(Addition),
 			input:    sampleMatrixCSV,
 			wantBody: "45",
 		},
 		{
 			name:     "multiply",
-			target:   "/multiply",
+			target:   "/mul",
 			handler:  http.HandlerFunc(Multiply),
 			input:    sampleMatrixCSV,
 			wantBody: "362880",
