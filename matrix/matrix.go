@@ -10,7 +10,7 @@ import (
 	This files contains the Matrix struct definition and methods acting on the matrix type
 */
 
-type Matrix struct{
+type Matrix struct {
 	Data [][]string
 	Size int
 }
@@ -30,8 +30,8 @@ func (m *Matrix) Echo() string {
 // Returns nothing, use m.Echo() to print.
 func (m *Matrix) Transpose() {
 	for row := 0; row < m.Size; row++ {
-		for col := row + 1; col < m.Size; col++{
-			 m.Data[row][col],  m.Data[col][row] = m.Data[col][row], m.Data[row][col]
+		for col := row + 1; col < m.Size; col++ {
+			m.Data[row][col], m.Data[col][row] = m.Data[col][row], m.Data[row][col]
 		}
 	}
 }
@@ -40,8 +40,8 @@ func (m *Matrix) Transpose() {
 // Nested slices get reduced to single slice.
 // Sliced gets joined into a string.
 func (m *Matrix) Flatten() string {
-	retMatrix := make([]string,0,m.Size)
-	for _, v := range m.Data{
+	retMatrix := make([]string, 0, m.Size)
+	for _, v := range m.Data {
 		retMatrix = append(retMatrix, v...)
 	}
 	return strings.Join(retMatrix, ",")
@@ -51,10 +51,10 @@ func (m *Matrix) Flatten() string {
 // Returns error if non-ints are encountered.
 func (m *Matrix) Add() (int, error) {
 	sum := 0
-	for _, row := range m.Data{
-		for j := range row{
+	for _, row := range m.Data {
+		for j := range row {
 			v, err := strconv.Atoi(row[j])
-			if err != nil{
+			if err != nil {
 				return 0, fmt.Errorf("error: non-int values in matrix. all values must be of type int for addition")
 			}
 			sum += v
@@ -67,10 +67,10 @@ func (m *Matrix) Add() (int, error) {
 // Returns error if non-ints are encountered.
 func (m *Matrix) Multiply() (int, error) {
 	prod := 1
-	for _, row := range m.Data{
-		for j := range row{
+	for _, row := range m.Data {
+		for j := range row {
 			v, err := strconv.Atoi(row[j])
-			if err != nil{
+			if err != nil {
 				return 0, fmt.Errorf("error: non-int values in matrix. all values must be of type int for multiplication")
 			}
 			prod *= v

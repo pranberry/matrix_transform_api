@@ -15,7 +15,6 @@ import (
 	- Loads into Matrix struct
 */
 
-
 // Extracts file from http.request and returns valid Matrix
 func NewMatrix(r *http.Request) (*Matrix, error) {
 
@@ -37,7 +36,7 @@ func NewMatrix(r *http.Request) (*Matrix, error) {
 	if len(records) == 0 {
 		return nil, fmt.Errorf("error: empty matrix")
 	}
-	
+
 	// Validate matrix for NxN
 	if err = validateNxN(records); err != nil {
 		return nil, err

@@ -17,15 +17,17 @@
 - watchout for scope creep:
   - the requirement is pretty straight-forward
 
-## What missing 
+## Assumptions
+
+- stdlib only
+- treating empty values (eg: `1,,2`) as legitimate
+- Desired response content-type not specified. Sending back txt/csv, not JSON
+
+## What missing
 
 - any need for concurrency features
 - not enforcing access by HTTP Request types. GET, POST, etc. all have the same behaviour
-- JSON response. Was not specified, returning all requests as string
-- logging middleware.
+- logging middleware
+  - current logging clutters the code, could easily be done via middleware
   - would be nice to just define and wrap
-  - channel logging
-
-## Assumptions
-
-- treating empty values (eg: `1,,2`) as legitimate.
+  - central place to define log format
